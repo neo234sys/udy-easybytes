@@ -7,15 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.eazybytes.accounts.constants.AccountsConstants;
+import com.eazybytes.accounts.dto.AccountsDto;
 import com.eazybytes.accounts.dto.CustomerDto;
 import com.eazybytes.accounts.entity.Accounts;
 import com.eazybytes.accounts.entity.Customer;
 import com.eazybytes.accounts.exception.CustomerAlreadyExistsException;
+import com.eazybytes.accounts.exception.ResourceNotFoundException;
+import com.eazybytes.accounts.mapper.AccountsMapper;
 import com.eazybytes.accounts.mapper.CustomerMapper;
 import com.eazybytes.accounts.repository.AccountsRepository;
 import com.eazybytes.accounts.repository.CustomerRepository;
 import com.eazybytes.accounts.service.IAccountsService;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -24,13 +28,12 @@ import lombok.NoArgsConstructor;
 */
 @Service
 @AllArgsConstructor
-@NoArgsConstructor
-public class AccountsServiceImpl implements IAccountsService {
+public class AccountsServiceImpl implements IAccountsService{
 	
-	@Autowired
-	 private AccountsRepository accountsRepository;
-	@Autowired
-	 private CustomerRepository customerRepository;
+
+	 AccountsRepository accountsRepository;
+
+	 CustomerRepository customerRepository;
 
 	/**
 	 *
@@ -44,7 +47,7 @@ public class AccountsServiceImpl implements IAccountsService {
                     +customerDto.getMobileNumber());
 		}
 		Customer savedCustomer = customerRepository.save(customer);
-		 accountsRepository.save(createNewAccount(savedCustomer));
+		accountsRepository.save(createNewAccount(savedCustomer));
 
 	}
 	
@@ -60,5 +63,62 @@ public class AccountsServiceImpl implements IAccountsService {
 	        newAccount.setCreatedAt(AccountsConstants.TIME_NOW);
 	        return newAccount;
 	}
+
+	/**
+	 *
+	 */
+	@Override
+	public CustomerDto fetchAccount(String mobileNumber) {
+		Customer customer=customerRepository.findByMobileNumber(mobileNumber)
+				.orElseThrow(() -> new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber)
+						);
+		 Accounts account =accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(
+				    ()->new ResourceNotFoundException("Account", "customerId",customer.getCustomerId().toString())
+		);
+		
+		 CustomerDto customerDto = CustomerMapper.mapToCustomerDto(customer, new CustomerDto());
+	     customerDto.setAccountsDto(AccountsMapper.mapToAccountsDto(account, new AccountsDto()));
+	     return customerDto;
+		
+	}
+
+	@Override
+	@Transactional
+	public boolean updateAccount(CustomerDto customerDto) {
+
+		 boolean isUpdated = false;
+	        AccountsDto accountsDto = customerDto.getAccountsDto();
+	        if(accountsDto !=null ){
+	            Accounts accounts = accountsRepository.findById(accountsDto.getAccountNumber()).orElseThrow(
+	                    () -> new ResourceNotFoundException("Account", "AccountNumber", accountsDto.getAccountNumber().toString())
+	            );
+	            AccountsMapper.mapToAccounts(accountsDto, accounts);
+	            accounts = accountsRepository.save(accounts);
+
+	            int d=4/0;
+	            Long customerId = accounts.getCustomerId();
+	            Customer customer = customerRepository.findById(customerId).orElseThrow(
+	                    () -> new ResourceNotFoundException("Customer", "CustomerID", customerId.toString())
+	            );
+	            CustomerMapper.mapToCustomer(customerDto,customer);
+	            customerRepository.save(customer);
+	            isUpdated = true;
+	        }
+	        return  isUpdated;
+	}
+	
+	 /**
+     * @param mobileNumber - Input Mobile Number
+     * @return boolean indicating if the delete of Account details is successful or not
+     */
+    @Override
+    public boolean deleteAccount(String mobileNumber) {
+        Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                () -> new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber)
+        );
+        accountsRepository.deleteByCustomerId(customer.getCustomerId());
+        customerRepository.deleteById(customer.getCustomerId());
+        return true;
+    }
 
 }
