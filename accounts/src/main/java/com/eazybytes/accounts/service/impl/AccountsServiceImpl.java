@@ -59,8 +59,8 @@ public class AccountsServiceImpl implements IAccountsService{
 	        newAccount.setAccountNumber(randomAccNumber);
 	        newAccount.setAccountType(AccountsConstants.SAVINGS);
 	        newAccount.setBranchAddress(AccountsConstants.ADDRESS);
-	        newAccount.setCreatedBy(AccountsConstants.ADMIN);
-	        newAccount.setCreatedAt(AccountsConstants.TIME_NOW);
+	        //newAccount.setCreatedBy(AccountsConstants.ADMIN);
+	        //newAccount.setCreatedAt(AccountsConstants.TIME_NOW);
 	        return newAccount;
 	}
 
