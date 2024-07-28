@@ -95,7 +95,7 @@ public class AccountsServiceImpl implements IAccountsService{
 	            AccountsMapper.mapToAccounts(accountsDto, accounts);
 	            accounts = accountsRepository.save(accounts);
 
-	            int d=4/0;
+	           
 	            Long customerId = accounts.getCustomerId();
 	            Customer customer = customerRepository.findById(customerId).orElseThrow(
 	                    () -> new ResourceNotFoundException("Customer", "CustomerID", customerId.toString())

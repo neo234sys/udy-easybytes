@@ -3,6 +3,7 @@ package com.eazybytes.accounts.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,7 @@ import com.eazybytes.accounts.dto.CustomerDto;
 import com.eazybytes.accounts.dto.ResponseDto;
 import com.eazybytes.accounts.service.IAccountsService;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 
@@ -27,12 +29,13 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping(path="/api", produces= {MediaType.APPLICATION_JSON_VALUE})
 @AllArgsConstructor
+@Validated
 public class AccountsController {
 	
 	IAccountsService iAccountsService;
 	
 	@PostMapping("/create")
-	public ResponseEntity<ResponseDto> createAccount(@RequestBody CustomerDto customerDto){
+	public ResponseEntity<ResponseDto> createAccount(@Valid @RequestBody CustomerDto customerDto){
 		iAccountsService.createAccount(customerDto);
 		return ResponseEntity
 			.status(HttpStatus.CREATED)
@@ -40,7 +43,9 @@ public class AccountsController {
 	}
 	
 	@GetMapping("/fetch")
-	public ResponseEntity<CustomerDto> fetchAccountDetails(@RequestParam String mobileNumber){
+	public ResponseEntity<CustomerDto> fetchAccountDetails(@RequestParam 
+			 @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
+			String mobileNumber){
 		CustomerDto custDto=iAccountsService.fetchAccount(mobileNumber);
 		return ResponseEntity
 				.status(HttpStatus.OK)
@@ -48,7 +53,7 @@ public class AccountsController {
 	}
 	
 	 @PutMapping("/update")
-	 public ResponseEntity<ResponseDto> updateAccountDetails(@RequestBody CustomerDto customerDto) {
+	 public ResponseEntity<ResponseDto> updateAccountDetails(@Valid @RequestBody CustomerDto customerDto) {
 		boolean isupdated= iAccountsService.updateAccount(customerDto);
 		if(isupdated) {
 			return ResponseEntity
