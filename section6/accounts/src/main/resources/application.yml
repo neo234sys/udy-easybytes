@@ -4,12 +4,22 @@
 
 server:
   port: 8080
+
+
 spring:
+
+  profiles:
+    active:
+    - "qa"  
+
+
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
     username: sa
     password: ''
+    tomcat:
+      abandon-when-percentage-full: 
   h2:
     console:
       enabled: true
@@ -17,5 +27,28 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
-    show-sql: true    
-  
+    show-sql: true 
+
+  config:
+    import: 
+      - "application_qa.yml"
+      - "application_prod.yml"
+
+
+build:
+  version: "3.0"
+
+accounts:
+  message: "Welcome to EazyBank accounts related local APIs "
+  contactDetails:
+    name: "John Doe - Developer"
+    email: "john@eazybank.com"
+  onCallSupport:
+    - (555) 555-1234
+    - (555) 523-1345
+  email: test@test.com
+
+  techSupport:
+    name: ashraf
+    email: "ashraf@test.com"
+    phone: 123456

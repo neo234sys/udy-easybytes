@@ -96,7 +96,7 @@
 				<version>3.4.1</version>
 				<configuration>
 					<to>
-						<image>hasan234abu/${project.artifactId}:s4</image>
+						<image>hasan234abu/${project.artifactId}:s6</image>
 					</to>
 				</configuration>
 			</plugin>
