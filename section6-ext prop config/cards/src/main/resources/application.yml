@@ -1,0 +1,42 @@
+server:
+  port: 8095
+spring:
+  profiles:
+    active:
+    - "prod"
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ''
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  config:
+    import:
+    - "application-qa.yml"
+    - "application-prod.yml"
+
+
+build:
+  version: "3.0"
+
+cards:
+  message: "Welcome to EazyBank related Cards local APIs "
+  contactDetails:
+    name: "John Doe - Developer"
+    email: "john@eazybank.com"
+  onCallSupport:
+      - (555) 555-1234
+      - (555) 523-1345
+  techSupport:
+    name: ashraf
+    email: "loans@local.com"
+    phone: 123456 		
