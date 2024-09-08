@@ -24,3 +24,11 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+# For property referesh at runtime    
+management:
+    endpoints:
+      web:
+        exposure:
+          include:
+            - "*"
