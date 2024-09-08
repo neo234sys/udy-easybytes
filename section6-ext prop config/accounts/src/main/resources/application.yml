@@ -8,8 +8,9 @@ spring:
     name: accounts
   profiles:
     active:
-    - "qa"  
-
+    - "prod"
+  config:
+    import: "optional:configserver:http://localhost:8071/"  
 
   datasource:
     url: jdbc:h2:mem:testdb
