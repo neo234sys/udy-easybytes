@@ -25,10 +25,10 @@ spring:
       ddl-auto: update
     show-sql: true
 
-
+# For property bus referesh at runtime using docker
 rabbitmq:
   host: "localhost"
-  port: "5672"
+  port: 5672
   username: "guest"
   password: "guest"
 

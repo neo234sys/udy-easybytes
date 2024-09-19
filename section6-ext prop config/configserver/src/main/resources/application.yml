@@ -21,3 +21,20 @@ server:
 
 encrypt:
   key: P@ssw0rd
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+        - "*"
+  health:
+    livenessstate:
+       enabled: true
+    readinessstate:
+       enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: true		 
